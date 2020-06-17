@@ -1,0 +1,12 @@
+/* Setting the height of logo as 100% so that it can be easily used anywhere  */
+.Logo {
+    height: 100%;
+    padding: 8px;
+    background-color:wheat;
+    box-sizing: border-box;
+    border-radius: 5px;
+}
+
+.Logo img {
+    height: 100%;
+}
