@@ -9,13 +9,11 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
 import axios from '../../axios-order'
-import * as actionTypes from '../../store/actions'
+import * as Action from '../../store/actions/index'
 
 class BurgerBuilder extends Component {
     state = {                   
         purchasing: false,                  // for displaying the Modal
-        loading: false,                     // for handling the Spinner   
-        error: false                        // for handling errors
     }
 
     // for enabling and disabling the button place orders
@@ -38,18 +36,13 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
+        this.props.onPurchaseInit()
         this.props.history.push('/checkout')
     }
 
     // fetching data from server after this component mounts
     componentDidMount() {
-        // axios.get('https://my-burger-1382c.firebaseio.com/ingredients.json')
-        //     .then(res => {
-        //         this.setState({ ingredients: res.data })    // setting the state of ingredients = fetched data from server
-        //     })
-        //     .catch(error => {
-        //         this.setState({ error: true })
-        //     })
+        this.props.onInitIngredients()
     }
 
     render() {
@@ -63,7 +56,7 @@ class BurgerBuilder extends Component {
         // {salad:true},{cheese: false} ...
         // if the count is 0 then the button would be disabled i.e disabledInfo[key] will become false 
         let orderSummary = null
-        let burger = this.state.error ? <p style={{textAlign:'center'}}>Ingredients can't be loaded!</p> : <Spinner />
+        let burger = this.props.error ? <p style={{textAlign:'center'}}>Ingredients can't be loaded!</p> : <Spinner />
         
         // if check is necessary because initial state of ingredients is set to null
         // and if this is omitted then the application will break because we are fetching data after BurgerBuilder gets mount
@@ -88,8 +81,6 @@ class BurgerBuilder extends Component {
                     purchaseCancelled={this.purchaseCancelHandler}
                     purchaseContinued={this.purchaseContinueHandler}/>
         }
-        if(this.state.loading)
-            orderSummary = <Spinner />
 
         return (
             <Aux>
@@ -103,13 +94,16 @@ class BurgerBuilder extends Component {
 }
 
 const mapStateToProps = state => ({
-    ings: state.ingredients,
-    price: state.totalPrice
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    error: state.burgerBuilder.error
 })
 
 const mapDispatchToProps = dispatch => ({
-    onAddIngredients: (ingredientName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName}),
-    onRemoveIngredients: (ingredientName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName})
+    onAddIngredients: (ingredientName) => dispatch(Action.addIngredients(ingredientName)),
+    onRemoveIngredients: (ingredientName) => dispatch(Action.removeIngredients(ingredientName)),
+    onInitIngredients: () => dispatch(Action.initIngredients()),
+    onPurchaseInit: () => dispatch(Action.purchaseInit())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios))
