@@ -15,7 +15,7 @@ import authReducer from './store/reducers/auth'
 
 axios.defaults.baseURL = 'https://my-burger-1382c.firebaseio.com/'
 
-const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composeEnhancer = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose
 
 const rootReducer = combineReducers({
   burgerBuilder: burgerBuilderReducer,

@@ -62,10 +62,7 @@ class BurgerBuilder extends Component {
         // if the count is 0 then the button would be disabled i.e disabledInfo[key] will become false 
         let orderSummary = null
         let burger = this.props.error ? <p style={{textAlign:'center'}}>Ingredients can't be loaded!</p> : <Spinner />
-        
-        // if check is necessary because initial state of ingredients is set to null
-        // and if this is omitted then the application will break because we are fetching data after BurgerBuilder gets mount
-        // so all the components which are dependent on the ingredient state will crash 
+         
         if(this.props.ings) {
             burger = (
                 <Aux>

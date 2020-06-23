@@ -9,6 +9,7 @@ import Input from '../../../components/UI/Input/Input'
 import axios from '../../../axios-order'
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler'
 import * as Action from '../../../store/actions/index'
+import { updateObject, checkValidity } from '../../../shared/utility'
 
 class ContactData extends Component {
     state = {
@@ -104,50 +105,16 @@ class ContactData extends Component {
         this.props.onOrderBurger(order, this.props.token)
     }
     
-    checkValidity(value, rules) {
-        let isValid = true
-        
-        // for dropdown since it does not require any validation
-        if(!rules)
-            return true
-        
-        if(rules.required) {
-            isValid = value.trim() !== '' && isValid
-        }
-
-        if(rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid
-        }
-
-        if(rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid
-        }
-
-        if (rules.isEmail) {
-            const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        if (rules.isNumeric) {
-            const pattern = /^\d+$/;
-            isValid = pattern.test(value) && isValid
-        }
-
-        return isValid
-    }
-
     // inputIdentifier is just a key of orderForm i.e name, street, email etc.
     inputChangedHandler = (e, inputIdentifier) => {
-        const updatedForm = {
-            ...this.state.orderForm
-        }
-        const updatedFormElement = {
-            ...updatedForm[inputIdentifier]
-        }
-        updatedFormElement.value = e.target.value
-        updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
-        updatedFormElement.touched = true
-        updatedForm[inputIdentifier] = updatedFormElement
+        const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+            value: e.target.value,
+            valid: checkValidity(e.target.value, this.state.orderForm[inputIdentifier].validation),
+            touched: true
+        })
+        const updatedForm = updateObject(this.state.orderForm, {
+            [inputIdentifier]: updatedFormElement
+        })
         
         let isFormValid = true
         for (const key in updatedForm) {

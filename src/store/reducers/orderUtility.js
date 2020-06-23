@@ -1,4 +1,4 @@
-import { updateObject } from '../utility'
+import {updateObject} from '../../shared/utility'
 
 export const purchaseInit = (state) => {
     return updateObject(state, { purchased: false })
