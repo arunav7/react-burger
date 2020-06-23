@@ -15,11 +15,13 @@ class Orders extends React.Component {
     }
 
     componentDidMount() {
-        this.props.onFetchOrders()
+        this.props.onFetchOrders(this.props.token, this.props.userId)
     }
 
     render() {
-        let order = <Spinner />
+        let order = this.props.orders === null 
+            ? <p style={{fontFamily: 'inherit', textAlign: 'center'}}> Sorry you have no orders </p> 
+            : <Spinner />
         if(!this.props.loading) {
             order = this.props.orders.map(order => (
                 <Order 
@@ -38,11 +40,13 @@ class Orders extends React.Component {
 
 const mapStateToProps = state => ({
     orders: state.order.orders,
-    loading: state.order.loading
+    loading: state.order.loading,
+    token: state.auth.token,
+    userId: state.auth.userId
 })
 
 const mapDispatchToProps = dispatch => ({
-    onFetchOrders: () => dispatch(Action.fetchOrders())
+    onFetchOrders: (token, userId) => dispatch(Action.fetchOrders(token, userId))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, axios))

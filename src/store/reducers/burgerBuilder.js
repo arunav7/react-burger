@@ -4,7 +4,8 @@ import {addIngredient, removeIngredient, setIngredient, fetchError } from './bur
 const initialState = {
     ingredients: null,
     totalPrice: 10.75,
-    error: false
+    error: false,
+    building: false
 }
 
 const reducer = (state = initialState, action) => {
